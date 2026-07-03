@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chitchat Dashboard</title>
+    <!-- Beautiful Google Fonts & FontAwesome for Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #0b0b0b;
+            --card-bg: #161616;
+            --accent-color: #12d04b;
+            --text-color: #ffffff;
+            --text-muted: #888888;
+            --font-header: 'Fredoka', sans-serif;
+            --font-body: 'Poppins', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-body);
+            padding-bottom: 90px; 
+            overflow-x: hidden;
+        }
+
+        /* Header section styled after 1000138341.jpg */
+        header {
+            text-align: center;
+            padding: 25px 0 15px 0;
+        }
+
+        header h1 {
+            font-family: var(--font-header);
+            font-size: 2rem;
+            letter-spacing: 1px;
+            text-transform: lowercase;
+            color: var(--text-color);
+        }
+
+        /* Top Search Bar Row */
+        .search-container {
+            display: flex;
+            padding: 0 20px;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .search-container input {
+            flex: 1;
+            background-color: #1a1a1a;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 18px;
+            color: var(--text-color);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+        }
+
+        .search-container input::placeholder {
+            color: #555;
+        }
+
+        .search-btn {
+            background-color: var(--accent-color);
+            color: black;
+            border: none;
+            border-radius: 12px;
+            padding: 0 22px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        /* Stories (Horizontal Scroll) Section with 12 American Names */
+        .stories-wrapper {
+            padding: 0 0 20px 20px;
+            overflow-x: auto;
+            white-space: nowrap;
+            display: flex;
+            gap: 16px;
+        }
+
+        .stories-wrapper::-webkit-scrollbar {
+            display: none; 
+        }
+
+        .story-item {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-color);
+            width: 76px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: var(--font-body);
+        }
+
+        .img-container {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-color);
+            padding: 3px;
+            margin-bottom: 8px;
+        }
+
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .story-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            white-space: normal;
+            word-wrap: break-word;
+            line-height: 1.2;
+        }
+
+        /* Grid Main Cards */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 10px 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 35px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            font-size: 1.2rem;
+            transition: transform 0.2s;
+        }
+
+        .card:active {
+            transform: scale(0.97);
+        }
+
+        .card i {
+            font-size: 1.3rem;
+        }
+
+        .card-blue i { color: #3498db; }
+        .card-green i { color: #2ecc71; }
+        .card-orange i { color: #e67e22; }
+        .card-purple i { color: #9b59b6; }
+        .card-info i { color: #5bc0de; }
+
+        .about-card {
+            grid-column: span 1;
+        }
+
+        /* Section Title Header */
+        .section-title {
+            padding: 0 20px;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            color: var(--text-color);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        /* Active Chats placeholder block layout */
+        .active-chats-box {
+            margin: 0 20px;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            opacity: 0.6;
+        }
+
+        /* Fixed Bottom Navigation Bar Layout */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #111111;
+            height: 75px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 10px;
+            border-top: 1px solid #1a1a1a;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-body);
+        }
+
+        .nav-item i {
+            font-size: 1.3rem;
+            margin-bottom: 4px;
+        }
+
+        .nav-item.active {
+            color: var(--text-color);
+        }
+
+        /* Floating Plus Action Button */
+        .plus-btn-container {
+            position: relative;
+            top: -20px;
+        }
+
+        .plus-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: black;
+            border: none;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(18, 208, 75, 0.3);
+        }
+
+        /* Search Overlay Page (Modal Popup style) */
+        .search-page-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            z-index: 200;
+            display: none; 
+            flex-direction: column;
+            padding: 30px 20px;
+        }
+
+        .overlay-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .close-overlay-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: 20px;
+        }
+
+        .overlay-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .typing-space-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .typing-space-container input {
+            width: 100%;
+            background-color: #161616;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 16px;
+            color: var(--text-color);
+            font-family: var(--font-body);
+            font-size: 1.1rem;
+            outline: none;
+        }
+
+        .typing-space-container input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .action-search-btn {
+            background-color: var(--accent-color);
+            color: black;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        .result-box {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ff3333;
+            display: none; 
+        }
+
+        /* PERFECT CHAT WALL OVERLAY SYSTEM */
+        .chat-wall-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            z-index: 300;
+            display: none;
+            flex-direction: column;
+        }
+
+        .chat-wall-header {
+            background-color: #111111;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .back-arrow-btn {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            font-size: 1.6rem;
+            cursor: pointer;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-wall-iframe {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: #000;
+        }
+
+        .chat-container{
+    width:100%;
+    margin:15px 20px 20px;
+    border-radius:20px;
+    overflow:hidden;
+    background:rgba(0,0,0,.35);
+    backdrop-filter:blur(12px);
+    border:1px solid rgba(0,255,136,.4);
+    box-shadow:0 0 20px rgba(0,255,136,.25);
+}
+
+.header{
+    text-align:center;
+    padding:18px;
+    color:#9fffba;
+    font-size:20px;
+    font-weight:bold;
+    background:#111;
+}
+
+.messages{
+    padding:15px;
+    height:420px;
+    overflow:hidden;
+}
+
+.message{
+    margin-bottom:12px;
+    padding:12px;
+    border-radius:16px;
+    background:rgba(0,50,20,.45);
+    border:1px solid rgba(0,255,136,.25);
+    animation:pop .5s ease;
+}
+
+@keyframes pop{
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.name{
+    color:#fff;
+    font-weight:bold;
+    font-size:15px;
+}
+
+.location{
+    color:#8dff9e;
+    font-size:12px;
+    margin:3px 0 6px;
+}
+
+.text{
+    color:#eaffea;
+    font-size:14px;
+    line-height:1.4;
+}
+    </style>
+</head>
+<body>
+
+    <div id="top-anchor"></div>
+
+    <header>
+        <h1>chitchat</h1>
+    </header>
+
+    <main>
+        <!-- Top Custom Search Area Layout -->
+        <div class="search-container">
+            <input type="text" id="topSearchInput" placeholder="Search Friends...">
+            <button class="search-btn" id="topSearchBtn">Search</button>
+        </div>
+
+        <!-- 12 Stories items opening specific profile link destinations with American Names -->
+        <div class="stories-wrapper">
+            <!-- 1 -->
+            <button class="story-item class-open-wall1"
+onclick="window.location.href=' https://international-serv.github.io/tawkto.html/'">
+                <div class="img-container"><img src="https://i.postimg.cc/T1jPRhr4/IMG-20251218-WA0011.jpg" alt="FRANSESCO"></div>
+                <div class="story-name">FRANSESCO JADE MARIE</div>
+            </button>
+            <!-- 2 -->
+            <button class="story-item class-open-wall">
+                <div class="img-container"><img src="https://i.postimg.cc/qRxfqK5j/IMG-20260624-095337.jpg" alt="Olivia"></div>
+                <div class="story-name">SMITH AUCKLEY</div>
+            </button>
+            <!-- 3 -->
+            <button class="story-item class-open-wall">
+                <div class="img-container"><img src="https://i.pravatar.cc/150?img=12" alt="Michael"></div>
+                <div class="story-name">MICHAEL WAYNE</div>
+            </button>
+            <!-- 4 -->
+            <button class="story-item class-open-wall">
+                <div class="img-container"><img src="https://i.postimg.cc/8CGt5YQy/images-19.jpg" alt="Emma"></div>
+                <div class="story-name">EUCLAND WATSON</div>
+            </button>
+            <!-- 5 -->
+            <button class="story-item class-open-wall">
+                <div class="img-container"><img src="https://i.postimg.cc/65RPpn4T/images-22.jpg" alt="William"></div>
+                <div class="story-name">WILLIAM MILLER</div>
+            </button>
+            <!-- 6 -->
+            <button class="story-item class-open-wall">
+                <div class="img-container"><img src="https://i.postimg.cc/CKwsYfbR/images-23.jpg" alt="Sophia"></div>
+                <div class="story-name">ROBERTSON DAVIS</div>
+            </button>
+            <!-- 7 -->
+            <button class="story-item class-open-wall">
+                <div class="img-container"><img src="https://i.pravatar.cc/150?img=14" alt="David"></div>
+                <div class="story-name">DAVID CLARK</div>
+            </button>
+            <!-- 8 -->
+            <button class="story-item class-open-wall">
+                <div class="img-container"><img src="https://i.pravatar.cc/150?img=16" alt="Isabella"></div>
+                <div class="story-name">ISABELLA JONES</div>
+            </button>
+            <!-- 9 -->
+            <button class="story-item class-open-wall">
+                <div class="img-container"><img src="https://i.pravatar.cc/150?img=15" alt="John"></div>
+                <div class="story-name">JOHN MCLEY</div>
+            </button>
+            <!-- 10 -->
+            <button class="story-item class-open-wall">
+                <div class="img-container"><img src="https://i.postimg.cc/nVwxD4LR/images-20.jpg" alt="Charlotte"></div>
+                <div class="story-name">CHARLOTTE REID</div>
+            </button>
+            <!-- 11 -->
+            <button class="story-item class-open-wall">
+                <div class="img-container"><img src="https://i.pravatar.cc/150?img=18" alt="Robert"></div>
+                <div class="story-name">ROBERT TAYLOR</div>
+            </button>
+            <!-- 12 -->
+            <button class="story-item class-open-wall">
+                <div class="img-container"><img src="https://i.pravatar.cc/150?img=26" alt="Amelia"></div>
+                <div class="story-name">AMELIA WHITE</div>
+            </button>
+        </div>
+
+        <!-- Cards Navigation Action Grid Section -->
+<div class="grid-container">
+    <a href="javascript:void(0)" class="card card-blue" onclick="showChats()"><i class="fa-solid fa-comment-dots"></i> Chats</a>
+
+<a href="javascript:void(0)" class="card card-green" onclick="showGroups()"><i class="fa-solid fa-user-group"></i> Groups</a>
+
+<a href="javascript:void(0)" class="card card-orange" onclick="showCalls()"><i class="fa-solid fa-phone"></i> Calls</a>
+
+<a href="javascript:void(0)" class="card card-purple" onclick="showVideo()"><i class="fa-solid fa-video"></i> Video</a>
+    
+<div class="card" onclick="openAbout()">
+    <span>ℹ️</span>
+    <h3>ABOUT US</h3>
+</div>
+
+        <div class="chat-container">
+    <div class="header">LIVE CHAT</div>
+    <div id="messages" class="messages"></div>
+</div>
+    </main>
+
+    <!-- Bottom App Level Fixed Bar Navigation Menu -->
+    <nav class="bottom-nav">
+        <button class="nav-item" id="homeBtn">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </button>
+        <button class="nav-item active">
+            <i class="fa-solid fa-message"></i>
+            <span>Chats</span>
+        </button>
+        
+        <!-- Center Floating Action Action Trigger (+) -->
+        <div class="plus-btn-container">
+            <button class="plus-btn" id="plusBtn"><i class="fa-solid fa-plus"></i></button>
+        </div>
+
+        <!-- Activity Link Destination Button -->
+        <a href="  https://international-serv.github.io/bank.html/" class="nav-item" target="_blank">
+        
+            <span>BANK</span>
+        </a>
+        
+        <!-- Profile Link Destination Button -->
+        <a href="https://international-serv.github.io/about-payment/" class="nav-item" target="_blank">
+        
+            <span>REWARDS</span>
+        </a>
+    </nav>
+
+    <!-- Search Modal Page Viewport -->
+    <div class="search-page-overlay" id="searchPageOverlay">
+        <div class="overlay-header">
+            <button class="close-overlay-btn" id="closeOverlayBtn"><i class="fa-solid fa-arrow-left"></i></button>
+            <div class="overlay-title">Find Connections</div>
+        </div>
+        <div class="typing-space-container">
+            <input type="text" id="friendSearchInput" placeholder="search for a friend">
+            <button class="action-search-btn" id="actionSearchBtn">Search Directory</button>
+        </div>
+        <div class="result-box" id="resultBox">NO FRIEND FOUND</div>
+    </div>
+
+    <!-- CHAT WALL SCREEN VIEWPORT WITH BACK ARROW -->
+    <div class="chat-wall-overlay" id="chatWallOverlay">
+        <div class="chat-wall-header">
+            <button class="back-arrow-btn" id="closeWallBtn">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <span style="font-weight:600; font-size:1.1rem;">Chat Wall</span>
+        </div>
+        <iframe class="chat-wall-iframe" id="chatWallIframe" src=""></iframe>
+    </div>
+
+    <!-- Interface Functionality Script Setup -->
+    <script>
+        // Smoothly Scroll To Top when Home Action Item element is triggered
+        document.getElementById('homeBtn').addEventListener('click', function() {
+            document.getElementById('top-anchor').scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+
+        // Open Modal Search interface viewport on targeting (+) action element
+        const plusBtn = document.getElementById('plusBtn');
+        const searchPageOverlay = document.getElementById('searchPageOverlay');
+        const closeOverlayBtn = document.getElementById('closeOverlayBtn');
+        const actionSearchBtn = document.getElementById('actionSearchBtn');
+        const resultBox = document.getElementById('resultBox');
+        const friendSearchInput = document.getElementById('friendSearchInput');
+
+        plusBtn.addEventListener('click', function() {
+            searchPageOverlay.style.display = 'flex';
+            friendSearchInput.focus();
+        });
+
+        // Dismiss Modal Window Layer Viewport 
+        closeOverlayBtn.addEventListener('click', function() {
+            searchPageOverlay.style.display = 'none';
+            resultBox.style.display = 'none'; 
+            friendSearchInput.value = ''; 
+        });
+
+        actionSearchBtn.addEventListener('click', function() {
+            resultBox.style.display = 'block';
+        });
+
+        friendSearchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                resultBox.style.display = 'block';
+            }
+        });
+
+        // Chat Wall Frame Toggle Handlers
+        const chatWallOverlay = document.getElementById('chatWallOverlay');
+        const chatWallIframe = document.getElementById('chatWallIframe');
+        const closeWallBtn = document.getElementById('closeWallBtn');
+        const storyButtons = document.querySelectorAll('.class-open-wall');
+
+        // Target URL definition config setup
+        const chatWallUrl = " https://international-serv.github.io/chatroom//";
+
+        storyButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                chatWallIframe.src = chatWallUrl; // Lazy loads URL on demand
+                chatWallOverlay.style.display = 'flex';
+            });
+        });
+
+        // Use the custom Back Arrow button to safely dismiss the frame view
+        closeWallBtn.addEventListener('click', function() {
+            chatWallOverlay.style.display = 'none';
+            chatWallIframe.src = ""; // Unloads frame cleanly to preserve resources
+        });
+       
+function showPopup(message, color) {
+    const popup = document.createElement("div");
+
+    popup.innerHTML = message;
+    popup.style.position = "fixed";
+    popup.style.top = "50%";
+    popup.style.left = "50%";
+    popup.style.transform = "translate(-50%, -50%)";
+    popup.style.background = color;
+    popup.style.color = "#fff";
+    popup.style.padding = "20px 35px";
+    popup.style.borderRadius = "15px";
+    popup.style.fontSize = "22px";
+    popup.style.fontWeight = "bold";
+    popup.style.zIndex = "99999";
+
+    document.body.appendChild(popup);
+
+    setTimeout(function () {
+        popup.remove();
+    }, 2000);
+}
+
+function showChats() {
+    showPopup("TAP TO CHAT", "#12d04b");
+}
+
+function showGroups() {
+    showPopup("NO GROUPS AVAILABLE.", "#ff9800");
+}
+
+function showCalls() {
+    showPopup("NO CALLS AVAILABLE.", "#f44336");
+}
+
+function showVideo() {
+    showPopup("CONNECTING.....", "#12d04b");
+
+    setTimeout(function () {
+        showPopup("FAILED TO CONNECT", "#e53935");
+    }, 5000);
+}
+const topSearchBtn = document.getElementById("topSearchBtn");
+const topSearchInput = document.getElementById("topSearchInput");
+
+topSearchBtn.addEventListener("click", function () {
+
+    if (topSearchInput.value.trim() !== "") {
+        showPopup("NO FRIENDS FOUND", "#e53935");
+    } else {
+        showPopup("ENTER A NAME", "#ff9800");
+    }
+
+});
+
+function openAbout(){
+    document.getElementById("aboutPage").style.display="block";
+}
+
+function closeAbout(){
+    document.getElementById("aboutPage").style.display="none";
+}
+const chats = [
+
+{
+name:"Ethan Parker",
+location:"Miami, Florida, USA",
+msg:"Every moment with you feels magical."
+},
+{
+name:"Olivia Brooks",
+location:"Dallas, Texas, USA",
+msg:"You light up my world brighter than the stars."
+},
+{
+name:"Mason Carter",
+location:"Phoenix, Arizona, USA",
+msg:"My heart smiles whenever I think of you."
+},
+{
+name:"Ava Mitchell",
+location:"Seattle, Washington, USA",
+msg:"You are the sweetest part of every day."
+},
+{
+name:"Liam Foster",
+location:"Denver, Colorado, USA",
+msg:"Your voice is my favorite sound."
+},
+{
+name:"Sophia Reed",
+location:"Atlanta, Georgia, USA",
+msg:"You make life beautiful in countless ways."
+},
+{
+name:"Noah Bennett",
+location:"Boston, Massachusetts, USA",
+msg:"Every conversation with you feels special."
+},
+{
+name:"Emma Collins",
+location:"Nashville, Tennessee, USA",
+msg:"I cherish every memory we create together."
+},
+{
+name:"James Walker",
+location:"Portland, Oregon, USA",
+msg:"You bring warmth to my heart."
+},
+{
+name:"Oliver Smith",
+location:"London, United Kingdom",
+msg:"Thinking of you makes my day brighter."
+},
+{
+name:"Amelia Jones",
+location:"Manchester, United Kingdom",
+msg:"You're always in my thoughts."
+},
+{
+name:"Jack Brown",
+location:"Birmingham, United Kingdom",
+msg:"I feel lucky to know you."
+},
+{
+name:"Emily Taylor",
+location:"Liverpool, United Kingdom",
+msg:"You bring peace to my heart."
+},
+{
+name:"Harry Wilson",
+location:"Leeds, United Kingdom",
+msg:"I smile every time I see your name."
+},
+{
+name:"Olivia Davis",
+location:"Bristol, United Kingdom",
+msg:"You are truly one of a kind."
+},
+{
+name:"James Clark",
+location:"Sheffield, United Kingdom",
+msg:"You make everything feel easier."
+},
+{
+name:"Sophie Evans",
+location:"Glasgow, United Kingdom",
+msg:"You're my favorite thought of the day."
+},
+{
+name:"Chinedu Okafor",
+location:"Lagos, Nigeria",
+msg:"Distance means nothing when I care about you."
+},
+{
+name:"Thabo Mokoena",
+location:"Johannesburg, South Africa",
+msg:"You always cross my mind with a smile."
+},
+{
+name:"Lukas Hansen",
+location:"Oslo, Norway",
+msg:"You feel like sunshine in winter."
+},
+{
+name:"Ingrid Johansen",
+location:"Bergen, Norway",
+msg:"You make the world feel softer."
+},
+{
+name:"Emil Berg",
+location:"Trondheim, Norway",
+msg:"Thinking of you is my favorite habit."
+},
+{
+name:"Frederik Nielsen",
+location:"Copenhagen, Denmark",
+msg:"You bring calm to my chaos."
+},
+{
+name:"João Silva",
+location:"Lisbon, Portugal",
+msg:"You are always in my heart."
+},
+{
+name:"Li Wei",
+location:"Shanghai, China",
+msg:"Even across oceans, I feel close to you."
+}
+
+];
+
+let index = 0;
+const container = document.getElementById("messages");
+
+function addMessage(){
+
+const item = chats[index % chats.length];
+
+const div = document.createElement("div");
+div.className="message";
+
+div.innerHTML=`
+<div class="name">${item.name}</div>
+<div class="location">📍 ${item.location}</div>
+<div class="text">${item.msg}</div>
+`;
+
+container.prepend(div);
+
+if(container.children.length>8){
+container.removeChild(container.lastChild);
+}
+
+index++;
+
+}
+
+addMessage();
+
+setInterval(addMessage,1200);
+    </script>
+
+    <div id="aboutPage" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+overflow:auto;
+z-index:99999;
+background:linear-gradient(135deg,#b30059,#00bcd4);
+padding:25px;">
+
+<button onclick="closeAbout()" style="
+padding:12px 22px;
+font-size:22px;
+border:none;
+border-radius:20px;
+background:rgba(255,255,255,.15);
+color:white;
+cursor:pointer;">
+← Back
+</button>
+
+<div style="
+margin-top:25px;
+background:#22293d;
+border-radius:35px;
+padding:35px;
+color:white;">
+
+<h1 style="
+text-align:center;
+font-size:55px;
+font-family:Poppins,sans-serif;
+font-weight:800;
+margin-bottom:30px;
+background:linear-gradient(90deg,#16d7ff,#ff58aa);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;">
+Welcome to<br>ChitChat
+</h1>
+
+<p style="font-size:22px;line-height:1.8;">
+<span style="color:#16d7ff;font-weight:bold;">ChitChat</span> is a modern social communication platform founded by
+<span style="color:#ff58aa;font-weight:bold;">Sir Mc Laughton</span> in the United States with a vision of bringing people together through meaningful conversations and digital interaction.
+</p>
+
+<p style="font-size:22px;line-height:1.8;">
+Since its launch, ChitChat has provided a trusted space where users can connect, build friendships, exchange ideas, and create lasting relationships. The platform became especially popular throughout the United States, where most of its users are located.
+</p>
+
+<p style="font-size:22px;line-height:1.8;">
+Today, ChitChat has expanded beyond borders and is available worldwide, allowing people from different countries, cultures, and backgrounds to communicate seamlessly in one vibrant community.
+</p>
+
+<p style="font-size:22px;line-height:1.8;">
+Our mission is simple: Connect. Communicate. Belong. ChitChat continues to grow as a global destination for social interaction, helping people stay connected no matter where they are in the world.
+</p>
+
+</div>
+</div>
+</body>
+</html>
