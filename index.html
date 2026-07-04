@@ -434,6 +434,31 @@
     font-size:14px;
     line-height:1.4;
 }
+   .profile-header{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    margin:20px 0;
+}
+
+#profileImage{
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    object-fit:cover;
+    border:3px solid #32CD32;
+    margin-bottom:10px;
+}
+
+#changePhoto{
+    background:#32CD32;
+    color:#fff;
+    border:none;
+    padding:8px 18px;
+    border-radius:20px;
+    cursor:pointer;
+    font-size:14px;
+}
     </style>
 </head>
 <body>
@@ -445,8 +470,22 @@
     </header>
 
     <main>
-        <!-- Top Custom Search Area Layout -->
-        <div class="search-container">
+
+    <div class="profile-header">
+        <img id="profileImage"
+     src="https://i.postimg.cc/XvxZPsgs/22-223968-default-profile-picture-circle-hd-png-download.png"
+     alt="Profile Picture">
+
+        <input type="file" id="profilePic" accept="image/*" hidden>
+
+        <button id="changePhoto"
+                onclick="document.getElementById('profilePic').click()">
+            Change Photo
+        </button>
+    </div>
+
+    <!-- Top Custom Search Area Layout -->
+    <div class="search-container">
             <input type="text" id="topSearchInput" placeholder="Search Friends...">
             <button class="search-btn" id="topSearchBtn">Search</button>
         </div>
@@ -935,5 +974,28 @@ Our mission is simple: Connect. Communicate. Belong. ChitChat continues to grow 
 
 </div>
 </div>
+<script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+
+<script>
+const cloudinaryWidget = cloudinary.createUploadWidget({
+    cloudName: "co5ih8wu",
+    uploadPreset: "PROFILE"
+}, (error, result) => {
+
+    if (!error && result && result.event === "success") {
+
+    const imageUrl = result.info.secure_url;
+
+    // Show the uploaded image
+    document.getElementById("profileImage").src = imageUrl;
+
+}
+});
+
+// Open Cloudinary when Change Photo is clicked
+document.getElementById("changePhoto").onclick = function () {
+    cloudinaryWidget.open();
+};
+</script>
 </body>
 </html>
