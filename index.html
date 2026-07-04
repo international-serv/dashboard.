@@ -975,27 +975,159 @@ Our mission is simple: Connect. Communicate. Belong. ChitChat continues to grow 
 </div>
 </div>
 <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+<script src="https://upload-widget.cloudinary.com/global/all.js"></script>
 
-<script>
-const cloudinaryWidget = cloudinary.createUploadWidget({
-    cloudName: "co5ih8wu",
-    uploadPreset: "PROFILE"
-}, (error, result) => {
+<script type="module">
+    // 1. Import the same Firestore modules your Login page uses
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    if (!error && result && result.event === "success") {
+    // Your exact Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBzK4tt4gI-B8GAJVXqKpgQD6PTdtuxkbo",
+        authDomain: "chitchat-992d6.firebaseapp.com",
+        databaseURL: "https://chitchat-992d6-default-rtdb.firebaseio.com",
+        projectId: "chitchat-992d6",
+        storageBucket: "chitchat-992d6.firebasestorage.app",
+        messagingSenderId: "132736236077",
+        appId: "1:132736236077:web:d021488cc88724970ed6a4",
+        measurementId: "G-FTTH2WE910"
+    };
 
-    const imageUrl = result.info.secure_url;
+    // Initialize Firebase and Firestore
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-    // Show the uploaded image
-    document.getElementById("profileImage").src = imageUrl;
+    // 2. Identify who is logged in via localStorage phone token
+    const loggedInUserPhone = localStorage.getItem("loggedInUser");
 
-}
-});
+    // Load user profile picture if logged in
+    if (loggedInUserPhone) {
+        loadUserProfile(loggedInUserPhone);
+    } else {
+        console.log("No user logged in. Using default profile placeholder.");
+    }
 
-// Open Cloudinary when Change Photo is clicked
-document.getElementById("changePhoto").onclick = function () {
-    cloudinaryWidget.open();
-};
+    async function loadUserProfile(phone) {
+        try {
+            const userDocRef = doc(db, "users", phone);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                // If they have a saved profile picture in Firestore, update the UI
+                if (userData.profilePic) {
+                    document.getElementById("profileImage").src = userData.profilePic;
+                }
+            }
+        } catch (error) {
+            console.error("Error loading profile picture from Firestore:", error);
+        }
+    }
+
+    // 3. Setup Cloudinary Widget tied to user's Firestore Document
+    const cloudinaryWidget = cloudinary.createUploadWidget({
+        cloudName: "co5ih8wu",
+        uploadPreset: "PROFILE"
+    }, async (error, result) => {
+        if (!error && result && result.event === "success") {
+            const imageUrl = result.info.secure_url;
+
+            // Instantly show image change in UI
+            document.getElementById("profileImage").src = imageUrl;
+
+            // Save image link directly into this user's account inside Firestore
+            if (loggedInUserPhone) {
+                try {
+                    const userDocRef = doc(db, "users", loggedInUserPhone);
+                    await updateDoc(userDocRef, {
+                        profilePic: imageUrl
+                    });
+                    console.log("Profile picture saved securely to user's database entry!");
+                } catch (dbError) {
+                    console.error("Failed to save image link to Firestore:", dbError);
+                }
+            } else {
+                alert("Error: Image uploaded but no active user login detected to bind data to.");
+            }
+        }
+    });
+
+    // Open Cloudinary UI panel
+    document.getElementById("changePhoto").onclick = function () {
+        cloudinaryWidget.open();
+    };
+
+
+    // --- EXPOSE INTERFACE FUNCTIONS TO GLOBAL WINDOW SCOPE ---
+    // (Because this is a type="module" script, inline HTML onclick attributes need explicit exposure)
+    
+    window.showPopup = function(message, color) {
+        const popup = document.createElement("div");
+        popup.innerHTML = message;
+        popup.style.position = "fixed";
+        popup.style.top = "50%";
+        popup.style.left = "50%";
+        popup.style.transform = "translate(-50%, -50%)";
+        popup.style.background = color;
+        popup.style.color = "#fff";
+        popup.style.padding = "20px 35px";
+        popup.style.borderRadius = "15px";
+        popup.style.fontSize = "22px";
+        popup.style.fontWeight = "bold";
+        popup.style.zIndex = "99999";
+        document.body.appendChild(popup);
+        setTimeout(() => popup.remove(), 2000);
+    };
+
+    window.showChats = function() { window.showPopup("TAP TO CHAT", "#12d04b"); };
+    window.showGroups = function() { window.showPopup("NO GROUPS AVAILABLE.", "#ff9800"); };
+    window.showCalls = function() { window.showPopup("NO CALLS AVAILABLE.", "#f44336"); };
+    
+    window.showVideo = function() {
+        window.showPopup("CONNECTING.....", "#12d04b");
+        setTimeout(() => window.showPopup("FAILED TO CONNECT", "#e53935"), 5000);
+    };
+
+    window.openAbout = function() { document.getElementById("aboutPage").style.display = "block"; };
+    window.closeAbout = function() { document.getElementById("aboutPage").style.display = "none"; };
+
+    // --- LIVE SIMULATED FEED LOGIC ---
+    const chats = [
+        { name: "Ethan Parker", location: "Miami, Florida, USA", msg: "Every moment with you feels magical." },
+        { name: "Olivia Brooks", location: "Dallas, Texas, USA", msg: "You light up my world brighter than the stars." },
+        { name: "Mason Carter", location: "Phoenix, Arizona, USA", msg: "My heart smiles whenever I think of you." },
+        { name: "Ava Mitchell", location: "Seattle, Washington, USA", msg: "You are the sweetest part of every day." },
+        { name: "Liam Foster", location: "Denver, Colorado, USA", msg: "Your voice is my favorite sound." },
+        { name: "Sophia Reed", location: "Atlanta, Georgia, USA", msg: "You make life beautiful in countless ways." }
+    ];
+
+    let index = 0;
+    const container = document.getElementById("messages");
+
+    function addMessage() {
+        const item = chats[index % chats.length];
+        const div = document.createElement("div");
+        div.className = "message";
+        div.innerHTML = `
+            <div class="name">${item.name}</div>
+            <div class="location">📍 ${item.location}</div>
+            <div class="text">${item.msg}</div>
+        `;
+        container.prepend(div);
+        if (container.children.length > 8) {
+            container.removeChild(container.lastChild);
+        }
+        index++;
+    }
+
+    addMessage();
+    setInterval(addMessage, 1200);
+
+    // Navigation setup
+    document.getElementById('homeBtn').addEventListener('click', function() {
+        document.getElementById('top-anchor').scrollIntoView({ behavior: 'smooth' });
+    });
 </script>
 </body>
 </html>
