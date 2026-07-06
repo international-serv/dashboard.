@@ -459,6 +459,173 @@
     cursor:pointer;
     font-size:14px;
 }
+  
+
+.live-bar{
+    width:360px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+    padding:16px;
+    border-radius:30px;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+
+    background:linear-gradient(145deg,#090909,#151515,#0d0d0d);
+
+    border:2px solid #18ff63;
+
+    box-shadow:
+    0 0 15px rgba(24,255,99,.45),
+    inset 0 0 12px rgba(255,255,255,.05);
+
+    animation:barPulse 2s infinite;
+}
+
+.live-bar::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-120%;
+    width:45%;
+    height:100%;
+    background:rgba(255,255,255,.18);
+    transform:skewX(-25deg);
+    animation:shine 3s linear infinite;
+}
+
+.profiles{
+    width:56px;
+    height:56px;
+    position:relative;
+    flex-shrink:0;
+}
+
+.profile{
+    position:absolute;
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    object-fit:cover;
+
+    border:3px solid #18ff63;
+
+    box-shadow:
+    0 0 12px #18ff63;
+
+    opacity:0;
+
+    animation:rotateProfiles 8s infinite;
+}
+
+.p2{animation-delay:2s;}
+.p3{animation-delay:4s;}
+.p4{animation-delay:6s;}
+
+.text-box{
+    flex:1;
+}
+
+.title{
+    color:white;
+    font-size:24px;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+.subtitle{
+    margin-top:6px;
+
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    color:#18ff63;
+
+    font-weight:800;
+
+    font-size:16px;
+}
+
+.live-dot{
+
+    width:11px;
+    height:11px;
+
+    border-radius:50%;
+
+    background:#18ff63;
+
+    box-shadow:0 0 12px #18ff63;
+
+    animation:blink .8s infinite;
+}
+
+.arrow{
+    color:white;
+    font-size:30px;
+    animation:moveArrow 1s infinite;
+}
+
+@keyframes rotateProfiles{
+
+0%,100%{
+opacity:0;
+transform:scale(.5);
+}
+
+15%,35%{
+opacity:1;
+transform:scale(1.15);
+}
+
+50%{
+opacity:0;
+transform:scale(.5);
+}
+
+}
+
+@keyframes blink{
+
+50%{
+opacity:.2;
+}
+
+}
+
+@keyframes moveArrow{
+
+50%{
+transform:translateX(7px);
+}
+
+}
+
+@keyframes barPulse{
+
+50%{
+
+box-shadow:
+0 0 25px rgba(24,255,99,.8),
+inset 0 0 12px rgba(255,255,255,.08);
+
+}
+
+}
+
+@keyframes shine{
+
+0%{
+left:-120%;
+}
+
+100%{
+left:140%;
+}
+
+}
     </style>
 </head>
 <body>
@@ -490,71 +657,38 @@
             <button class="search-btn" id="topSearchBtn">Search</button>
         </div>
 
-        <!-- 12 Stories items opening specific profile link destinations with American Names -->
-        <div class="stories-wrapper">
-            <!-- 1 -->
-            <button class="story-item class-open-wall1"
-onclick="window.location.href=' https://international-serv.github.io/tawkto.html/'">
-                <div class="img-container"><img src="https://i.postimg.cc/T1jPRhr4/IMG-20251218-WA0011.jpg" alt="FRANSESCO"></div>
-                <div class="story-name">FRANSESCO JADE MARIE</div>
-            </button>
-            <!-- 2 -->
-            <button class="story-item class-open-wall">
-                <div class="img-container"><img src="https://i.postimg.cc/qRxfqK5j/IMG-20260624-095337.jpg" alt="Olivia"></div>
-                <div class="story-name">SMITH AUCKLEY</div>
-            </button>
-            <!-- 3 -->
-            <button class="story-item class-open-wall">
-                <div class="img-container"><img src="https://i.pravatar.cc/150?img=12" alt="Michael"></div>
-                <div class="story-name">MICHAEL WAYNE</div>
-            </button>
-            <!-- 4 -->
-            <button class="story-item class-open-wall">
-                <div class="img-container"><img src="https://i.postimg.cc/8CGt5YQy/images-19.jpg" alt="Emma"></div>
-                <div class="story-name">EUCLAND WATSON</div>
-            </button>
-            <!-- 5 -->
-            <button class="story-item class-open-wall">
-                <div class="img-container"><img src="https://i.postimg.cc/65RPpn4T/images-22.jpg" alt="William"></div>
-                <div class="story-name">WILLIAM MILLER</div>
-            </button>
-            <!-- 6 -->
-            <button class="story-item class-open-wall">
-                <div class="img-container"><img src="https://i.postimg.cc/CKwsYfbR/images-23.jpg" alt="Sophia"></div>
-                <div class="story-name">ROBERTSON DAVIS</div>
-            </button>
-            <!-- 7 -->
-            <button class="story-item class-open-wall">
-                <div class="img-container"><img src="https://i.pravatar.cc/150?img=14" alt="David"></div>
-                <div class="story-name">DAVID CLARK</div>
-            </button>
-            <!-- 8 -->
-            <button class="story-item class-open-wall">
-                <div class="img-container"><img src="https://i.pravatar.cc/150?img=16" alt="Isabella"></div>
-                <div class="story-name">ISABELLA JONES</div>
-            </button>
-            <!-- 9 -->
-            <button class="story-item class-open-wall">
-                <div class="img-container"><img src="https://i.pravatar.cc/150?img=15" alt="John"></div>
-                <div class="story-name">JOHN MCLEY</div>
-            </button>
-            <!-- 10 -->
-            <button class="story-item class-open-wall">
-                <div class="img-container"><img src="https://i.postimg.cc/nVwxD4LR/images-20.jpg" alt="Charlotte"></div>
-                <div class="story-name">CHARLOTTE REID</div>
-            </button>
-            <!-- 11 -->
-            <button class="story-item class-open-wall">
-                <div class="img-container"><img src="https://i.pravatar.cc/150?img=18" alt="Robert"></div>
-                <div class="story-name">ROBERT TAYLOR</div>
-            </button>
-            <!-- 12 -->
-            <button class="story-item class-open-wall">
-                <div class="img-container"><img src="https://i.pravatar.cc/150?img=26" alt="Amelia"></div>
-                <div class="story-name">AMELIA WHITE</div>
-            </button>
+       <div class="live-bar" onclick="window.location.href='https://international-serv.github.io/chatpage/'">
+
+    <div class="profiles">
+
+        <img src="https://i.pravatar.cc/100?img=68" class="profile p1">
+
+        <img src="https://i.pravatar.cc/100?img=60" class="profile p2">
+
+        <img src="https://i.pravatar.cc/100?img=55" class="profile p3">
+
+        <img src="https://i.pravatar.cc/100?img=64" class="profile p4">
+
+    </div>
+
+    <div class="text-box">
+
+        <div class="title">
+            CLICK TO CHAT
         </div>
 
+        <div class="subtitle">
+            <span class="live-dot"></span>
+            LIVE NOW
+        </div>
+
+    </div>
+
+    <div class="arrow">
+        ➜
+    </div>
+
+</div>
         <!-- Cards Navigation Action Grid Section -->
 <div class="grid-container">
     <a href="javascript:void(0)" class="card card-blue" onclick="showChats()"><i class="fa-solid fa-comment-dots"></i> Chats</a>
